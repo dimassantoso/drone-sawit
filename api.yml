@@ -1,0 +1,223 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Drone-Sawit
+  license:
+    name: MIT
+servers:
+  - url: http://localhost
+paths:
+  /estate:
+    post:
+      summary: Create New Estate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EstateRequest'
+      responses:
+        '201':
+          description: Estate created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstateResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /estate/{id}/tree:
+    post:
+      summary: Create New Estate Tree
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EstateTreeRequest'
+      responses:
+        '201':
+          description: Estate Tree created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstateTreeResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /estate/{id}/stats:
+    get:
+      summary: Get stats of estate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstateStatsResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /estate/{id}/drone-plan:
+    get:
+      summary: Get dron plan for the estate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: max_distance
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstateDronePlanResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+
+    EstateRequest:
+      type: object
+      required:
+        - length
+        - width
+      properties:
+        length:
+          type: integer
+          minimum: 1
+          maximum: 50000
+          example: 10
+        width:
+          type: integer
+          minimum: 1
+          maximum: 50000
+          example: 10
+
+    EstateResponse:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          example: "ac69f4d6-a6c6-4547-b129-a3c3a6b05a0f"
+
+    EstateTreeRequest:
+      type: object
+      required:
+        - x
+        - y
+        - height
+      properties:
+        x:
+          type: integer
+          minimum: 1
+          example: 10
+        y:
+          type: integer
+          minimum: 1
+          example: 10
+        height:
+          type: integer
+          minimum: 1
+          maximum: 30
+          example: 30
+
+    EstateTreeResponse:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          example: "ac69f4d1-a6c2-4547-b129-a3c3a6b05a0f"
+
+    EstateStatsResponse:
+      type: object
+      required:
+        - count
+        - max
+        - min
+        - median
+      properties:
+        count:
+          type: integer
+          example: 0
+        max:
+          type: integer
+          example: 0
+        min:
+          type: integer
+          example: 0
+        median:
+          type: number
+          example: 0
+
+    EstateDronePlanResponse:
+      type: object
+      required:
+        - distance
+      properties:
+        distance:
+          type: integer
+          example: 200
+        rest:
+          type: object
+          required:
+            - x
+            - y
+          properties:
+            x:
+              type: integer
+              example: 1
+            y:
+              type: integer
+              example: 1
